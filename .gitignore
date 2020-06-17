@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# Osx garbage
+.DS_Store
+
+# testing
+.nyc_output/

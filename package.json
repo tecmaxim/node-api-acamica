@@ -1,0 +1,48 @@
+{
+  "name": "api-challenge",
+  "version": "1.0.0",
+  "description": "This api is developed to perform a challenge",
+  "main": "app.js",
+  "scripts": {
+    "test": "nyc --reporter=lcov --reporter=text mocha test/**/*.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://github.com/tecmaxim/node-api-acamica.git"
+  },
+  "author": "Maxi Mendoza",
+  "license": "ISC",
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql": "^2.16.0",
+    "superagent": "^5.2.2",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "mocha": "^6.2.3",
+    "nyc": "^14.1.1",
+    "proxyquire": "^2.1.3",
+    "sinon": "^7.5.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/controllers/**/*.js"
+    ],
+    "all": true
+  }
+}
