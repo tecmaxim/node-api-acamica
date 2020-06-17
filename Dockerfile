@@ -1,4 +1,4 @@
-FROM node:12.14.0
+FROM node:12.18.0
 WORKDIR /api-acamica
 COPY package*.json ./
 RUN npm install --only=production
