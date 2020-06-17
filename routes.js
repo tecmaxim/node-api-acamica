@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+// Controllers to request
+const studentController = require('./src/controllers/studentCtl');
+const paymentMethodController = require('./src/controllers/paymentMethodCtl');
 // express
 const app = express();
 const router = express.Router();
