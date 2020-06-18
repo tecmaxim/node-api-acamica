@@ -3,6 +3,12 @@ const studentRepo = require('../repositories/studentRepository.js');
 const connection = require('../../db/connector.js');
 const studentsPaymentMethodRepo = require('../repositories/studentPaymentMethodRepository.js');
 
+/**
+ * Save a student
+ *
+ * @param {request Object} req
+ * @param {response Object} res
+ */
 const save = async (req, res) => {
   const { student } = req.body;
   const { paymentMethod } = req.body;
@@ -58,3 +64,66 @@ const save = async (req, res) => {
   }
 };
 module.exports.save = save;
+
+/**
+ * Get All students
+ *
+ * @param {request Object} req
+ * @param {response Object} resp
+ */
+const getAllStudents = async (req, res) => {
+  const queryParams = req.query;
+  let criteriaString = '';
+  let { offset } = queryParams;
+  // Delete from object to avoid re-check
+  if (offset) {
+    delete queryParams.offset;
+  } else {
+    offset = null;
+  }
+
+  // Making Create "Where" string criteria
+  Object.keys(queryParams).forEach((key) => {
+    criteriaString += criteriaString === '' ? '' : ' and ';
+    criteriaString += `${key} like '%${queryParams[key]}%'`;
+  });
+
+  console.log(`[DEBUG]:GET ALL STUDENTS
+    WHERE ${criteriaString}, 
+    OFFSET ${offset}
+  `);
+  try {
+    // Callback response from mysql.query component
+    studentRepo.getAll(criteriaString, offset, (err, result) => {
+      if (err) {
+        console.error(`[DEBUG]:GET ALL STUDENTS ${JSON.stringify(err)}`);
+        return res.status(err.status).json(err);
+      }
+      // query Promise ok
+      return res.status(result.status).json(result.data);
+    });
+  } catch (errCatch) {
+    console.error(errCatch);
+    throw errCatch;
+  }
+};
+module.exports.getAllStudents = getAllStudents;
+
+const getOneStudent = async (req, res) => {
+  try {
+    // Callback response from mysql.query component
+    studentRepo.getOne(req.params.id, (err, result) => {
+      if (err) {
+        console.error(`[DEBUG]:GET ALL STUDENTS ${JSON.stringify(err)}`);
+        return res.status(err.status).json(err);
+      }
+      // query Promise ok
+      return res.status(result.status).json(result.data);
+    });
+  } catch (errCatch) {
+    console.error(errCatch);
+    throw errCatch;
+  }
+  return true;
+};
+module.exports.getOneStudent = getOneStudent;

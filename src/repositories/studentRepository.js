@@ -4,6 +4,17 @@ const statusHandler = require('../statusHandler');
  * Student Repository
  * @author Maxi Mendoza
  */
+const { LIMIT_DEFAULT } = process.env;
+
+const STUDENT_SELECT = `SELECT 
+S.name,
+S.email,
+S.career,
+S.phone,
+S.birthday,
+S.country,
+PM.description,
+SP.installments FROM students S `;
 
 /**
  * Save a student
@@ -51,5 +62,72 @@ const store = (studentData, respCallback) => {
     }
   );
 };
-
 module.exports.store = store;
+
+/**
+ * Get all actives Students
+ *
+ * @param {queryString} criteria
+ * @param {queryString} offset
+ * @param {callback} respCallback
+ */
+const getAll = (criteria, offset = null, respCallback) => {
+  const query = `
+    ${STUDENT_SELECT}
+    INNER JOIN students_payment_method SP ON S.idStudent=SP.idStudent
+    INNER JOIN payment_methods PM ON PM.id = SP.idPayment
+    WHERE S.isActive = 1 AND ${criteria} 
+    LIMIT ${LIMIT_DEFAULT} 
+    ${offset !== null ? `OFFSET =${offset}` : ''}
+    `;
+
+  connection.query(
+    query,
+    (err, rows) => {
+      if (err) {
+        console.error(`[ERROR]:[GET ONE] ${JSON.stringify(err)}`);
+        return respCallback({
+          status: statusHandler.BAD_REQUEST,
+          msg: err
+        }, null);
+      }
+      respCallback(null, {
+        status: statusHandler.SUCCESS,
+        data: rows
+      });
+    }
+  );
+};
+module.exports.getAll = getAll;
+
+/**
+ * Get One active Student
+ *
+ * @param {queryParam} id
+ * @param {callback} callback
+ */
+const getOne = (id, respCallback) => {
+  const query = `
+    ${STUDENT_SELECT}
+    INNER JOIN students_payment_method SP ON S.idStudent=SP.idStudent
+    INNER JOIN payment_methods PM ON PM.id = SP.idPayment
+    WHERE S.idStudent=${id} AND S.isActive = 1`;
+
+  connection.query(
+    query,
+    (err, student) => {
+      if (err) {
+        console.error(`[ERROR]:[GET ONE] ${JSON.stringify(err)}`);
+        return respCallback({
+          status: statusHandler.BAD_REQUEST,
+          msg: err
+        }, null);
+      }
+      respCallback(null, {
+        status: statusHandler.SUCCESS,
+        data: student
+      });
+    }
+  );
+};
+module.exports.getOne = getOne;
