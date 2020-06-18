@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 // Controllers to request
-const studentController = require('./src/controllers/studentCtl');
-const paymentMethodController = require('./src/controllers/paymentMethodCtl');
+const studentController = require('./src/controllers/studentController');
+const paymentMethodController = require('./src/controllers/paymentMethodController');
 // express
 const app = express();
 const router = express.Router();
@@ -19,45 +19,23 @@ router.get('/health-check', async (req, res) => {
 });
 
 // GET all students
-router.get('/student', async (req, res) => {
-  // Callback response
-  studentController.getAllStudents(req.query, (status, result) => {
-    res.status(status).json(result);
-  });
-});
+router.get('/student', studentController.getAllStudents);
 
 // GET an student
-router.get('/student/:id', async (req, res) => {
-  studentController.getOneStudent(req.params, (status, result) => {
-    res.status(status).json(result);
-  });
-});
+router.get('/student/:id', studentController.getOneStudent);
 
 // INSERT An Student
-router.post('/student', async (req, res) => {
-  const result = await studentController.save(req.body);
-  res.status(201).json(result);
-});
+router.post('/student', studentController.save);
 
 // Update student
-router.put('/student/:id', async (req, res) => {
-  const result = await studentController.update(req.body, req.params);
-  res.status(202).json(result);
-});
+router.put('/student/:id', studentController.update);
 
 // DELETE An Student
-router.delete('/student/:id', async (req, res) => {
-  const result = await studentController.deleteStudent(req.params);
-  res.status(204).json(result);
-});
+router.delete('/student/:id', studentController.deleteStudent);
 
 // Get all payments availables
-router.get('/payment', async (req, res) => {
-  // Callback Response
-  paymentMethodController.getPaymentMethods((status, result) => {
-    res.status(status).json(result);
-  });
-});
+router.get('/payment', paymentMethodController.getPaymentMethods);
+
 
 app.use(bodyParser.json());
 // prefix
