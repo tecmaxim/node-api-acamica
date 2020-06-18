@@ -40,7 +40,7 @@ CREATE TABLE `student_payment_method` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `idStudent` int NOT NULL,
   `idPayment` int NOT NULL,
-  `installments` int DEFAULT NULL,
+  `installments` tinyint(2) DEFAULT NULL,
   `isActive` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `students_paymets_option_fk_students` (`idStudent`),
