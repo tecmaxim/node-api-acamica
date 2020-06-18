@@ -9,6 +9,22 @@ const statusHandler = require('../statusHandler');
  * Save a student
  * @param {object} studentData
  * @param {object} respCallback
+ *
+ * Request Body
+ * {
+ *   "student": {
+ *       "name":"Nomber",
+ *       "email": "mail@gmail.com",
+ *       "career": "Comunications",
+ *       "birthday": "1988-10-10",
+ *       "phone": 123213123,
+ *       "country": "Arg",
+ *       "city": "Bs As"
+ *   },
+ *   "paymentMethod": {
+ *       "idPayment":1
+ *   }
+ * }
  */
 const store = (studentData, respCallback) => {
   const queryInsert = 'INSERT INTO students SET ?';

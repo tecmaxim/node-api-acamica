@@ -10,6 +10,9 @@ const statusHandler = require('../statusHandler.js');
  *  Save data Payment of a student
  * @param {object} params
  * @returns {object}
+ *
+ * Relationship Schema
+ * See studentRepository.save
  */
 const store = (params, respCBack) => {
   const queryInsert = 'INSERT INTO students_payment_method SET ?';
