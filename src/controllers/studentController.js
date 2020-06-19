@@ -6,7 +6,7 @@ const studentsPaymentMethodRepo = require('../repositories/studentPaymentMethodR
  * Student Controller Repository
  * @author Maxi Mendoza
  */
-
+const BAD_REQUEST = 'Bad Request';
 /**
  * Save a student
  *
@@ -19,6 +19,12 @@ const save = async (req, res) => {
 
   console.log(`[DEBUG]: NEW STUDENT RECEIVED ${JSON.stringify(req.body)}`);
   try {
+    // Check body request to avoid crashes
+    if (
+      student === undefined
+      || paymentMethod === undefined
+    ) return res.status(500).json({ error: BAD_REQUEST });
+
     /**
     * Transaction is handled outside models to avoid
     * multiples nested callbacks on responses and
@@ -145,6 +151,12 @@ const update = async (req, res) => {
   const { id } = req.params;
 
   console.log(`[DEBUG]: NEW STUDENT RECEIVED ${JSON.stringify(req.body)}`);
+  // Check body request to avoid crashes
+  if (
+    student === undefined
+    || paymentMethod === undefined
+  ) return res.status(500).json({ error: BAD_REQUEST });
+
   try {
     /**
     * Transaction is handled outside models to avoid
@@ -198,10 +210,10 @@ const update = async (req, res) => {
 module.exports.update = update;
 
 /**
- * Delete student
+ * Delete student (Logic)
  *
- * @param {object} req 
- * @param {object} res 
+ * @param {object} req
+ * @param {object} res
  */
 const deleteStudent = async (req, res) => {
   const { id } = req.params;
@@ -233,7 +245,7 @@ const deleteStudent = async (req, res) => {
             });
             return res.status(errPayment.status).json(errPayment);
           }
-          // If all data is saved, commit and response
+          // If all data is updated, commit and response
           connection.commit((errCommit) => {
             if (errCommit) {
               connection.rollback(() => {
