@@ -69,9 +69,9 @@ http://<your_host>/api/v1/student/<id_student>
         "phone": 123456789,
         "country": "Arg",
         "city": "Buenos Aires"
-    },,
+    },
     "paymentMethod": {
-        "idPayment":2
+        "idPayment":2,
         "installments" 2
     }
 }
