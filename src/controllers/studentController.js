@@ -2,6 +2,10 @@ const studentRepo = require('../repositories/studentRepository.js');
 // Ony for handler transaction
 const connection = require('../../db/connector.js');
 const studentsPaymentMethodRepo = require('../repositories/studentPaymentMethodRepository.js');
+/**
+ * Student Controller Repository
+ * @author Maxi Mendoza
+ */
 
 /**
  * Save a student
@@ -130,7 +134,7 @@ const getOneStudent = async (req, res) => {
 module.exports.getOneStudent = getOneStudent;
 
 /**
- * Save a student
+ * Update a student
  *
  * @param {request Object} req
  * @param {response Object} res
@@ -162,7 +166,7 @@ const update = async (req, res) => {
           installments: paymentMethod.installments
         };
         console.log(`dataPayment ${JSON.stringify(dataPayment)}`);
-        // Try to save data oh payment method selected
+        // Try to save update on payment method selected
         studentsPaymentMethodRepo.update(dataPayment, id, (errPayment, responseCbPayment) => {
           if (errPayment) {
             // If fail trigger rollback and reject request
@@ -171,7 +175,7 @@ const update = async (req, res) => {
             });
             return res.status(errPayment.status).json(errPayment);
           }
-          // If all data is saved, commit and response
+          // If all data is update, commit and response
           connection.commit((errCommit) => {
             if (errCommit) {
               connection.rollback(() => {
@@ -192,3 +196,61 @@ const update = async (req, res) => {
   }
 };
 module.exports.update = update;
+
+/**
+ * Delete student
+ *
+ * @param {object} req 
+ * @param {object} res 
+ */
+const deleteStudent = async (req, res) => {
+  const { id } = req.params;
+  console.log(`[DEBUG]: DELETING STUDENT ${id}} `);
+  try {
+    // Logic DELETE
+    const dataUpdate = {
+      student:
+    {
+      isActive: 0
+    },
+      paymentMethod: {
+        isActive: 0
+      }
+    };
+    connection.beginTransaction(() => {
+      studentRepo.update(dataUpdate.student, id, (err, responseCb) => {
+        console.log(JSON.stringify(responseCb));
+        // if fail on try to delete student, reject
+        if (err) {
+          return res.status(err.status).json(err);
+        }
+        // Try to delete data on payment method selected
+        studentsPaymentMethodRepo.update(dataUpdate.paymentMethod, id, (errPayment, responseCbPayment) => {
+          if (errPayment) {
+          // If fail trigger rollback and reject request
+            connection.rollback((error) => {
+              console.error(`[ROLLBACK]: FAIL ON TRY TO SAVE RELATION ${JSON.stringify(error)}`);
+            });
+            return res.status(errPayment.status).json(errPayment);
+          }
+          // If all data is saved, commit and response
+          connection.commit((errCommit) => {
+            if (errCommit) {
+              connection.rollback(() => {
+                console.log('[ROLLBACK]: FAIL ON COMMIT');
+              });
+            }
+            console.log('[DEBUG]: Transaction Commited!');
+          // End conection if is server stateless
+          // connection.end();
+          });
+          res.status(responseCbPayment.status).json(responseCbPayment);
+        });
+      });
+    });
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+module.exports.deleteStudent = deleteStudent;
