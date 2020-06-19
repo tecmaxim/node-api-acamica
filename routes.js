@@ -1,11 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 // Controllers to request
 const studentController = require('./src/controllers/studentController');
 const paymentMethodController = require('./src/controllers/paymentMethodController');
 // express
 const app = express();
 const router = express.Router();
+
+// ACCEPT CORS ACCESS FROM ENV
+const { SERVICE_FRONTEND } = process.env;
+app.use(cors({ origin: SERVICE_FRONTEND }));
 
 // healtCheck
 router.get('/health-check', async (req, res) => {
