@@ -75,3 +75,34 @@ const update = async (data, id, respCBack) => {
   );
 };
 module.exports.update = update;
+
+/**
+ * Get one Payment Method
+ * INTERNAL
+ *
+ * @param {*} id 
+ * @param {*} callback 
+ */
+const getOne = async (id, callback) => {
+  const querySelect = `SELECT
+   S.id as id,
+   S.description,
+   SP.installments  FROM payment_methods S
+   INNER JOIN students_payment_method SP ON S.id=SP.idPayment
+   WHERE SP.idStudent = ${id}`;
+
+  connection.query(
+    querySelect,
+    (err, rows) => {
+      if (err) {
+        console.error(`[ERROR]:  ${JSON.stringify(err)}`);
+        callback(err, null);
+      }
+      callback(null, {
+        status: statusHandler.SUCCESS,
+        data: rows
+      });
+    }
+  );
+};
+module.exports.getOne = getOne;

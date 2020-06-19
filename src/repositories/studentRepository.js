@@ -1,5 +1,6 @@
 const connection = require('../../db/connector.js');
 const statusHandler = require('../statusHandler');
+const studentPaymentMethodRepo = require('../repositories/studentPaymentMethodRepository.js');
 /**
  * Student Repository
  * @author Maxi Mendoza
@@ -7,13 +8,15 @@ const statusHandler = require('../statusHandler');
 const { LIMIT_DEFAULT } = process.env;
 
 const STUDENT_SELECT = `SELECT 
-S.idStudent,
+S.idStudent as id,
 S.name,
 S.email,
 S.career,
 S.phone,
 S.birthday,
-S.country,
+S.country `;
+
+const STUDENT_SELECT_ALL = `${STUDENT_SELECT},
 PM.description,
 SP.installments FROM students S `;
 
@@ -22,21 +25,6 @@ SP.installments FROM students S `;
  * @param {object} studentData
  * @param {object} respCallback
  *
- * Request Body
- * {
- *   "student": {
- *       "name":"Nomber",
- *       "email": "mail@gmail.com",
- *       "career": "Comunications",
- *       "birthday": "1988-10-10",
- *       "phone": 123213123,
- *       "country": "Arg",
- *       "city": "Bs As"
- *   },
- *   "paymentMethod": {
- *       "idPayment":1
- *   }
- * }
  */
 const store = (studentData, respCallback) => {
   const queryInsert = 'INSERT INTO students SET ?';
@@ -74,7 +62,7 @@ module.exports.store = store;
  */
 const getAll = (criteria, offset = null, respCallback) => {
   const query = `
-    ${STUDENT_SELECT}
+    ${STUDENT_SELECT_ALL}
     INNER JOIN students_payment_method SP ON S.idStudent=SP.idStudent
     INNER JOIN payment_methods PM ON PM.id = SP.idPayment
     WHERE S.isActive = 1 ${criteria !== '' ? `AND ${criteria}` : ''}
@@ -108,10 +96,9 @@ module.exports.getAll = getAll;
  * @param {callback} callback
  */
 const getOne = (id, respCallback) => {
+  let finalAnswer;
   const query = `
-    ${STUDENT_SELECT}
-    INNER JOIN students_payment_method SP ON S.idStudent=SP.idStudent
-    INNER JOIN payment_methods PM ON PM.id = SP.idPayment
+    ${STUDENT_SELECT} FROM students S
     WHERE S.idStudent=${id} AND S.isActive = 1`;
 
   connection.query(
@@ -124,15 +111,37 @@ const getOne = (id, respCallback) => {
           msg: err
         }, null);
       }
-      respCallback(null, {
-        status: statusHandler.SUCCESS,
-        data: student
+
+      studentPaymentMethodRepo.getOne(student[0].id, (err, result) => {
+        if (err) {
+          console.error(`[ERROR] CAN NOT FOUND PAYMENT FROM STUDENT:
+            ${JSON.stringify(err.message)}`);
+          return;
+        }
+        // Perform answer
+        finalAnswer = { student: student[0] };
+        // Get Payload of dataPayment
+        const data = result.data[0];
+        // Edit final Answer
+        finalAnswer.student.paymentMethod = data;
+
+        respCallback(null, {
+          status: statusHandler.SUCCESS,
+          data: finalAnswer
+        });
       });
     }
   );
 };
 module.exports.getOne = getOne;
 
+/**
+ * Update Student
+ *
+ * @param {*} studentData 
+ * @param {*} id 
+ * @param {*} respCallback 
+ */
 const update = (studentData, id, respCallback) => {
   const queryUpdate = `UPDATE students SET ? WHERE idStudent = ${id}`;
   // Query promise
