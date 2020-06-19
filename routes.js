@@ -19,12 +19,34 @@ router.get('/health-check', async (req, res) => {
 });
 
 // GET all students
+/*
+*
+* Can be http://<host>:<port>/api/v1/student?name=Maxi&country=Arg&offset=3
+*
+*/
 router.get('/student', studentController.getAllStudents);
 
 // GET an student
 router.get('/student/:id', studentController.getOneStudent);
 
 // INSERT An Student
+/*
+* Request Body
+ * {
+ *   "student": {
+ *       "name":"Nomber",
+ *       "email": "mail@gmail.com",
+ *       "career": "Comunications",
+ *       "birthday": "1988-10-10",
+ *       "phone": 123213123,
+ *       "country": "Arg",
+ *       "city": "Bs As"
+ *   },
+ *   "paymentMethod": {
+ *       "idPayment":1
+ *   }
+ * }
+ * */
 router.post('/student', studentController.save);
 
 // Update student
@@ -34,7 +56,7 @@ router.put('/student/:id', studentController.update);
 router.delete('/student/:id', studentController.deleteStudent);
 
 // Get all payments availables
-router.get('/payment', paymentMethodController.getPaymentMethods);
+router.get('/payment', paymentMethodController.getAvailablePayments);
 
 
 app.use(bodyParser.json());
