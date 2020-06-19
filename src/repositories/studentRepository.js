@@ -7,6 +7,7 @@ const statusHandler = require('../statusHandler');
 const { LIMIT_DEFAULT } = process.env;
 
 const STUDENT_SELECT = `SELECT 
+S.idStudent,
 S.name,
 S.email,
 S.career,
@@ -76,7 +77,7 @@ const getAll = (criteria, offset = null, respCallback) => {
     ${STUDENT_SELECT}
     INNER JOIN students_payment_method SP ON S.idStudent=SP.idStudent
     INNER JOIN payment_methods PM ON PM.id = SP.idPayment
-    WHERE S.isActive = 1 AND ${criteria} 
+    WHERE S.isActive = 1 ${criteria !== '' ? `AND ${criteria}` : ''}
     LIMIT ${LIMIT_DEFAULT} 
     ${offset !== null ? `OFFSET =${offset}` : ''}
     `;
@@ -131,3 +132,30 @@ const getOne = (id, respCallback) => {
   );
 };
 module.exports.getOne = getOne;
+
+const update = (studentData, id, respCallback) => {
+  const queryUpdate = `UPDATE students SET ? WHERE idStudent = ${id}`;
+  // Query promise
+  connection.query(
+    queryUpdate,
+    studentData,
+    (err, result) => {
+      if (err) {
+        console.error(`[ERROR]: ${JSON.stringify(err.message)}`);
+        // return status;
+        respCallback({
+          status: statusHandler.BAD_REQUEST,
+          data: JSON.stringify(err.message)
+        }, null);
+        return;
+      }
+      // IF save
+      respCallback(null,
+        {
+          status: statusHandler.NO_CONTENT,
+          studentId: result.insertId
+        });
+    }
+  );
+};
+module.exports.update = update;

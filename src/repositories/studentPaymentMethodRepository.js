@@ -29,6 +29,7 @@ const store = (params, respCBack) => {
           data: err
         }, null);
       }
+      // Query Promise Ok
       respCBack(null,
         {
           status: statusHandler.CREATED,
@@ -37,5 +38,40 @@ const store = (params, respCBack) => {
     }
   );
 };
-
 module.exports.store = store;
+
+/**
+ *  Update Payment Method
+ *
+ * @param {obect} data
+ * @param {queryParam} id
+ * @param {callback} respCBack
+ *
+ * Relationship Schema
+ * See studentRepository.update
+ */
+const update = async (data, id, respCBack) => {
+  const query = `UPDATE students_payment_method SET ?
+   WHERE idStudent = ${id}`;
+  // Save data
+  connection.query(
+    query,
+    data,
+    (err, result) => {
+      if (err) {
+        console.error(`[ERROR]:[PaymentMethod] ${JSON.stringify(err)}`);
+        return respCBack({
+          status: statusHandler.BAD_REQUEST,
+          data: err
+        }, null);
+      }
+      // Query Promise Ok
+      respCBack(null,
+        {
+          status: statusHandler.NO_CONTENT,
+          data: result.insertId
+        });
+    }
+  );
+};
+module.exports.update = update;
