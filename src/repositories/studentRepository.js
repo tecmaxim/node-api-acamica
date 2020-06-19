@@ -12,6 +12,7 @@ S.idStudent as id,
 S.name,
 S.email,
 S.career,
+S.city,
 S.phone,
 S.birthday,
 S.country `;
