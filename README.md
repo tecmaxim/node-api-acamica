@@ -1,4 +1,5 @@
 ## Challenge Node-Api Acamica
+### V 1.0.0
 
 ## How to start
 ### Clone repository
