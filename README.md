@@ -36,9 +36,10 @@ pm2 start app.js --name "api-acamica"
 5) Try to get into the bash with ```~$ docker exec -it [docker-image-name] bash```.
 
 ## ENDPOINTS
-
+GET Example in localhost with port 7990: 
+http://localhost:7990/api/v1/payment
 ### POST
-http://<your_host>/api/v1/student
+http://<your_host>:<port>/api/v1/student
 ```
 {
     "student": {
@@ -58,7 +59,7 @@ http://<your_host>/api/v1/student
 ```
 
 ### PUT
-http://<your_host>/api/v1/student/<id_student>
+http://<your_host>:<port>/api/v1/student/<id_student>
 ```
 {    
     "student": {
@@ -78,16 +79,20 @@ http://<your_host>/api/v1/student/<id_student>
 ```
 
 ### GET ONE
-http://<localhost>/api/v1/student/4
+http://<your_host>:<port>/api/v1/student/4
 
-### GET ALL
-http://localhost:7990/api/v1/student
+### GET ALL (results limited by LIMIT_DEFUALT env setting)
+http://<your_host>:<port>/api/v1/student
 
 ### GET WITH SEARCH AND PAGINATION
-http://localhost:7990/api/v1/student?name=Maxi&country=Arg&offset=3
+Search
+http://<your_host>:<port>/api/v1/student?name=<some_name>&country=<some_country>
+
+Whit pagination:
+http://<your_host>:<port>/api/v1/student?name=<some_name>&country=<some_country>&offset=<offset>
 
 ### DELETE
-http://localhost:7990/api/v1/student/<id_student>
+http://<your_host>:<port>/api/v1/student/<id_student>
 
 ### GET PAYMEMT AVAILABLES
-http://localhost:7990/api/v1/payment
+http://<your_host>:<port>/api/v1/payment
