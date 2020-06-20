@@ -4,7 +4,7 @@
 ## How to start
 ### Clone repository
 ```bash
-git clone https://github.com/tecmaxim/api-acamica.git
+git clone https://github.com/tecmaxim/node-api-acamica.git
 ```
 ### Install dependencies, copy env file set the main settings and run the main script
 ```bash
